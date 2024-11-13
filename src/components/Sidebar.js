@@ -10,10 +10,14 @@ const SidebarContainer = styled.div`
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 100;
 
   @media (max-width: 768px) {
-    width: 200px;
-    padding: 8px;
+    position: fixed;
+    left: ${props => props.$isOpen ? '0' : '-250px'};
+    height: 100vh;
+    box-shadow: ${props => props.$isOpen ? '0 0 10px rgba(0, 0, 0, 0.1)' : 'none'};
   }
 `;
 
@@ -98,26 +102,49 @@ const DeleteButton = styled.button`
   }
 `;
 
-function Sidebar({ chats, activeChatId, onNewChat, onSelectChat, onDeleteChat }) {
+const Overlay = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: ${props => props.$isOpen ? 'block' : 'none'};
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 90;
+  }
+`;
+
+function Sidebar({ chats, activeChatId, onNewChat, onSelectChat, onDeleteChat, isOpen, onClose }) {
   return (
-    <SidebarContainer>
-      <NewChatButton onClick={onNewChat}>New Chat</NewChatButton>
-      <ChatList>
-        {chats.map((chat) => (
-          <ChatItemContainer key={chat.id}>
-            <ChatItem
-              $isActive={chat.id === activeChatId}
-              onClick={() => onSelectChat(chat.id)}
-            >
-              {chat.title || 'New Chat'}
-            </ChatItem>
-            {chats.length > 1 && (
-              <DeleteButton onClick={() => onDeleteChat(chat.id)}>×</DeleteButton>
-            )}
-          </ChatItemContainer>
-        ))}
-      </ChatList>
-    </SidebarContainer>
+    <>
+      <SidebarContainer $isOpen={isOpen}>
+        <NewChatButton onClick={onNewChat}>New Chat</NewChatButton>
+        <ChatList>
+          {chats.map(chat => (
+            <ChatItemContainer key={chat.id}>
+              <ChatItem
+                $isActive={chat.id === activeChatId}
+                onClick={() => {
+                  onSelectChat(chat.id);
+                  if (window.innerWidth <= 768) {
+                    onClose();
+                  }
+                }}
+              >
+                {chat.title}
+              </ChatItem>
+              {chats.length > 1 && (
+                <DeleteButton onClick={() => onDeleteChat(chat.id)}>×</DeleteButton>
+              )}
+            </ChatItemContainer>
+          ))}
+        </ChatList>
+      </SidebarContainer>
+      <Overlay $isOpen={isOpen} onClick={onClose} />
+    </>
   );
 }
 

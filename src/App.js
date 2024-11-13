@@ -11,6 +11,25 @@ const AppContainer = styled.div`
   background-color: ${props => props.theme.colors.background};
   color: ${props => props.theme.colors.text};
   transition: all 0.3s ease;
+  position: relative;
+`;
+
+const MenuButton = styled.button`
+  display: none;
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  z-index: 1000;
+  padding: 8px;
+  background-color: ${props => props.theme.colors.surface};
+  border: 1px solid ${props => props.theme.colors.border};
+  border-radius: 4px;
+  cursor: pointer;
+  color: ${props => props.theme.colors.text};
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 `;
 
 const MainContent = styled.div`
@@ -29,6 +48,7 @@ function App() {
   const [activeChatId, setActiveChatId] = useState(() => {
     return chats[0]?.id || '1';
   });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     localStorage.setItem('chats', JSON.stringify(chats));
@@ -70,12 +90,17 @@ function App() {
   return (
     <ThemeProvider>
       <AppContainer>
+        <MenuButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+          {isSidebarOpen ? '✕' : '☰'}
+        </MenuButton>
         <Sidebar
           chats={chats}
           activeChatId={activeChatId}
           onNewChat={handleNewChat}
           onSelectChat={setActiveChatId}
           onDeleteChat={handleDeleteChat}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
         />
         <MainContent>
           <ThemeToggle />
