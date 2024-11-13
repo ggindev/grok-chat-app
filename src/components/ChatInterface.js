@@ -7,11 +7,13 @@ const ChatContainer = styled.div`
   width: 80%;
   max-width: 800px;
   height: 80vh;
-  background-color: white;
+  background-color: ${props => props.theme.colors.surface};
+  color: ${props => props.theme.colors.text};
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  transition: all 0.3s ease;
 `;
 
 const MessagesContainer = styled.div`
@@ -29,9 +31,15 @@ const InputContainer = styled.div`
 const Input = styled.input`
   flex-grow: 1;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 5px;
   margin-right: 10px;
+  background-color: ${props => props.theme.colors.surface};
+  color: ${props => props.theme.colors.text};
+
+  &::placeholder {
+    color: ${props => props.theme.colors.secondary};
+  }
 `;
 
 const SendButton = styled.button`

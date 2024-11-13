@@ -9,8 +9,12 @@ const MessageContainer = styled.div`
 `;
 
 const MessageBubble = styled.div`
-  background-color: ${props => props.$isUser ? '#007bff' : '#e9ecef'};
-  color: ${props => props.$isUser ? 'white' : 'black'};
+  background-color: ${props => props.$isUser 
+    ? props.theme.colors.primary 
+    : props.theme.isDarkMode 
+      ? props.theme.colors.surface 
+      : '#e9ecef'};
+  color: ${props => props.$isUser || props.theme.isDarkMode ? 'white' : 'black'};
   padding: 10px 15px;
   border-radius: 15px;
   max-width: 70%;
@@ -20,13 +24,21 @@ const MessageBubble = styled.div`
   }
   
   & code {
-    background-color: ${props => props.$isUser ? '#0056b3' : '#d1d5db'};
+    background-color: ${props => props.$isUser 
+      ? '#0056b3' 
+      : props.theme.isDarkMode 
+        ? '#1a1a1a' 
+        : '#d1d5db'};
     padding: 2px 4px;
     border-radius: 4px;
   }
 
   & pre {
-    background-color: ${props => props.$isUser ? '#0056b3' : '#d1d5db'};
+    background-color: ${props => props.$isUser 
+      ? '#0056b3' 
+      : props.theme.isDarkMode 
+        ? '#1a1a1a' 
+        : '#d1d5db'};
     padding: 8px;
     border-radius: 4px;
     overflow-x: auto;

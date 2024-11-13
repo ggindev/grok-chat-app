@@ -4,11 +4,12 @@ import styled from 'styled-components';
 const SidebarContainer = styled.div`
   width: 250px;
   height: 100%;
-  background-color: #f8f9fa;
-  border-right: 1px solid #dee2e6;
+  background-color: ${props => props.theme.colors.surface};
+  border-right: 1px solid ${props => props.theme.colors.border};
   padding: 20px;
   display: flex;
   flex-direction: column;
+  transition: all 0.3s ease;
 `;
 
 const NewChatButton = styled.button`
@@ -30,31 +31,57 @@ const ChatList = styled.div`
   overflow-y: auto;
 `;
 
+const ChatItemContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+`;
+
 const ChatItem = styled.div`
   padding: 10px;
   cursor: pointer;
   border-radius: 5px;
-  margin-bottom: 5px;
-  background-color: ${props => props.$isActive ? '#e9ecef' : 'transparent'};
+  background-color: ${props => props.$isActive ? props.theme.colors.hover : 'transparent'};
+  color: ${props => props.theme.colors.text};
+  flex-grow: 1;
+  margin-right: 5px;
 
   &:hover {
-    background-color: #e9ecef;
+    background-color: ${props => props.theme.colors.hover};
   }
 `;
 
-function Sidebar({ chats, activeChatId, onNewChat, onSelectChat }) {
+const DeleteButton = styled.button`
+  padding: 5px 8px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  opacity: 0.8;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+function Sidebar({ chats, activeChatId, onNewChat, onSelectChat, onDeleteChat }) {
   return (
     <SidebarContainer>
       <NewChatButton onClick={onNewChat}>New Chat</NewChatButton>
       <ChatList>
         {chats.map((chat) => (
-          <ChatItem
-            key={chat.id}
-            $isActive={chat.id === activeChatId}
-            onClick={() => onSelectChat(chat.id)}
-          >
-            {chat.title || 'New Chat'}
-          </ChatItem>
+          <ChatItemContainer key={chat.id}>
+            <ChatItem
+              $isActive={chat.id === activeChatId}
+              onClick={() => onSelectChat(chat.id)}
+            >
+              {chat.title || 'New Chat'}
+            </ChatItem>
+            {chats.length > 1 && (
+              <DeleteButton onClick={() => onDeleteChat(chat.id)}>×</DeleteButton>
+            )}
+          </ChatItemContainer>
         ))}
       </ChatList>
     </SidebarContainer>

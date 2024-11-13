@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ChatInterface from './components/ChatInterface';
 import Sidebar from './components/Sidebar';
+import { ThemeProvider } from './context/ThemeContext';
+import ThemeToggle from './components/ThemeToggle';
 
 const AppContainer = styled.div`
   display: flex;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: ${props => props.theme.colors.background};
+  color: ${props => props.theme.colors.text};
+  transition: all 0.3s ease;
 `;
 
 const MainContent = styled.div`
@@ -52,21 +56,36 @@ function App() {
 
   const activeChat = chats.find(chat => chat.id === activeChatId) || chats[0];
 
+  const handleDeleteChat = (chatId) => {
+    const newChats = chats.filter(chat => chat.id !== chatId);
+    setChats(newChats);
+    
+    // If the active chat is being deleted, switch to another chat
+    if (chatId === activeChatId) {
+      const newActiveChatId = newChats[0]?.id;
+      setActiveChatId(newActiveChatId);
+    }
+  };
+
   return (
-    <AppContainer>
-      <Sidebar
-        chats={chats}
-        activeChatId={activeChatId}
-        onNewChat={handleNewChat}
-        onSelectChat={setActiveChatId}
-      />
-      <MainContent>
-        <ChatInterface
-          messages={activeChat.messages}
-          onMessagesUpdate={(messages) => updateChatMessages(activeChatId, messages)}
+    <ThemeProvider>
+      <AppContainer>
+        <Sidebar
+          chats={chats}
+          activeChatId={activeChatId}
+          onNewChat={handleNewChat}
+          onSelectChat={setActiveChatId}
+          onDeleteChat={handleDeleteChat}
         />
-      </MainContent>
-    </AppContainer>
+        <MainContent>
+          <ThemeToggle />
+          <ChatInterface
+            messages={activeChat.messages}
+            onMessagesUpdate={(messages) => updateChatMessages(activeChatId, messages)}
+          />
+        </MainContent>
+      </AppContainer>
+    </ThemeProvider>
   );
 }
 
