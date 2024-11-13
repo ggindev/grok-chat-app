@@ -68,7 +68,7 @@ function ChatInterface({ messages, onMessagesUpdate }) {
     setInputValue('');
 
     try {
-      const response = await sendMessageToGrok(inputValue);
+      const response = await sendMessageToGrok(inputValue, messages);
       const grokMessage = {
         text: response.content,
         isUser: false,

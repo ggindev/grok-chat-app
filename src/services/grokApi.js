@@ -7,14 +7,21 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true
 });
 
-export const sendMessageToGrok = async (message) => {
+export const sendMessageToGrok = async (message, chatHistory = []) => {
   try {
+    // Convert chat history to the format expected by the API
+    const messages = [
+      { role: 'system', content: 'You are Grok, a chatbot inspired by the Hitchhiker\'s Guide to the Galaxy.' },
+      ...chatHistory.map(msg => ({
+        role: msg.isUser ? 'user' : 'assistant',
+        content: msg.text
+      })),
+      { role: 'user', content: message }
+    ];
+
     const completion = await openai.chat.completions.create({
       model: 'grok-beta',
-      messages: [
-        { role: 'system', content: 'You are Grok, a chatbot inspired by the Hitchhiker\'s Guide to the Galaxy.' },
-        { role: 'user', content: message }
-      ],
+      messages: messages,
     });
 
     return completion.choices[0].message;
