@@ -5,8 +5,7 @@ import { sendMessageToGrok } from '../services/grokApi';
 
 const ChatContainer = styled.div`
   width: 80%;
-  max-width: 800px;
-  height: 80vh;
+  height: 95vh;
   background-color: ${props => props.theme.colors.surface};
   color: ${props => props.theme.colors.text};
   border-radius: 10px;
