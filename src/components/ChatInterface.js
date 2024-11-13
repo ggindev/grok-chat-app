@@ -47,8 +47,7 @@ const SendButton = styled.button`
   }
 `;
 
-function ChatInterface() {
-  const [messages, setMessages] = useState([]);
+function ChatInterface({ messages, onMessagesUpdate }) {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -64,7 +63,8 @@ function ChatInterface() {
       timestamp: new Date().toISOString(),
     };
 
-    setMessages(prevMessages => [...prevMessages, userMessage]);
+    const newMessages = [...messages, userMessage];
+    onMessagesUpdate(newMessages);
     setInputValue('');
 
     try {
@@ -74,7 +74,7 @@ function ChatInterface() {
         isUser: false,
         timestamp: new Date().toISOString(),
       };
-      setMessages(prevMessages => [...prevMessages, grokMessage]);
+      onMessagesUpdate([...newMessages, grokMessage]);
     } catch (error) {
       console.error('Error sending message to Grok:', error);
       setError('Failed to get response from Grok. Please try again.');
