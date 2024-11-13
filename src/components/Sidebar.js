@@ -3,23 +3,29 @@ import styled from 'styled-components';
 
 const SidebarContainer = styled.div`
   width: 250px;
-  height: 100%;
+  max-height: 100vh;
   background-color: ${props => props.theme.colors.surface};
   border-right: 1px solid ${props => props.theme.colors.border};
-  padding: 20px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
+
+  @media (max-width: 768px) {
+    width: 200px;
+    padding: 8px;
+  }
 `;
 
 const NewChatButton = styled.button`
-  padding: 10px;
+  padding: 8px;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
 
   &:hover {
     background-color: #0056b3;
@@ -29,22 +35,39 @@ const NewChatButton = styled.button`
 const ChatList = styled.div`
   flex-grow: 1;
   overflow-y: auto;
+  margin-right: -4px;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${props => props.theme.colors.border};
+    border-radius: 4px;
+  }
 `;
 
 const ChatItemContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
+  position: relative;
+  margin-bottom: 4px;
 `;
 
 const ChatItem = styled.div`
-  padding: 10px;
+  padding: 8px 10px;
   cursor: pointer;
   border-radius: 5px;
   background-color: ${props => props.$isActive ? props.theme.colors.hover : 'transparent'};
   color: ${props => props.theme.colors.text};
-  flex-grow: 1;
-  margin-right: 5px;
+  width: 100%;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover {
     background-color: ${props => props.theme.colors.hover};
@@ -52,16 +75,26 @@ const ChatItem = styled.div`
 `;
 
 const DeleteButton = styled.button`
-  padding: 5px 8px;
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px 6px;
   background-color: #dc3545;
   color: white;
   border: none;
   border-radius: 3px;
   cursor: pointer;
-  opacity: 0.8;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-size: 0.8rem;
+
+  ${ChatItemContainer}:hover & {
+    opacity: 0.8;
+  }
 
   &:hover {
-    opacity: 1;
+    opacity: 1 !important;
   }
 `;
 

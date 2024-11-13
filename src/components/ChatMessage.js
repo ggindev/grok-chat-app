@@ -5,7 +5,8 @@ import ReactMarkdown from 'react-markdown';
 const MessageContainer = styled.div`
   display: flex;
   justify-content: ${props => props.$isUser ? 'flex-end' : 'flex-start'};
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  padding: 0 4px;
 `;
 
 const MessageBubble = styled.div`
@@ -15,12 +16,14 @@ const MessageBubble = styled.div`
       ? props.theme.colors.surface 
       : '#e9ecef'};
   color: ${props => props.$isUser || props.theme.isDarkMode ? 'white' : 'black'};
-  padding: 10px 15px;
-  border-radius: 15px;
-  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 85%;
+  font-size: 0.95rem;
 
   & p {
     margin: 0;
+    line-height: 1.4;
   }
   
   & code {
@@ -30,7 +33,8 @@ const MessageBubble = styled.div`
         ? '#1a1a1a' 
         : '#d1d5db'};
     padding: 2px 4px;
-    border-radius: 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
   }
 
   & pre {
@@ -42,6 +46,12 @@ const MessageBubble = styled.div`
     padding: 8px;
     border-radius: 4px;
     overflow-x: auto;
+    margin: 4px 0;
+    
+    & code {
+      padding: 0;
+      background-color: transparent;
+    }
   }
 `;
 
