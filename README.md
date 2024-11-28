@@ -26,6 +26,11 @@ Create a `.env` file in the root directory and add your Grok API key:
 
 REACT_APP_GROK_API_KEY=your_api_key_here
 
+In the project directoru, run 
+
+### `npm install`
+
+
 ## Available Scripts
 
 In the project directory, you can run:
