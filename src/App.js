@@ -4,6 +4,7 @@ import ChatInterface from './components/ChatInterface';
 import Sidebar from './components/Sidebar';
 import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
+import SettingsModal from './components/SettingsModal';
 
 const AppContainer = styled.div`
   display: flex;
@@ -40,6 +41,28 @@ const MainContent = styled.div`
   padding: 20px;
 `;
 
+const SettingsButton = styled.button`
+  position: absolute;
+  top: 20px;
+  right: 70px;
+  padding: 10px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${props => props.theme.colors.surface};
+  color: ${props => props.theme.colors.text};
+  border: 1px solid ${props => props.theme.colors.border};
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: ${props => props.theme.colors.hover};
+  }
+`;
+
 function App() {
   const [chats, setChats] = useState(() => {
     const savedChats = localStorage.getItem('chats');
@@ -49,6 +72,7 @@ function App() {
     return chats[0]?.id || '1';
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('chats', JSON.stringify(chats));
@@ -103,12 +127,17 @@ function App() {
           onClose={() => setIsSidebarOpen(false)}
         />
         <MainContent>
+          <SettingsButton onClick={() => setIsSettingsOpen(true)}>⚙️</SettingsButton>
           <ThemeToggle />
           <ChatInterface
             messages={activeChat.messages}
             onMessagesUpdate={(messages) => updateChatMessages(activeChatId, messages)}
           />
         </MainContent>
+        <SettingsModal 
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+        />
       </AppContainer>
     </ThemeProvider>
   );

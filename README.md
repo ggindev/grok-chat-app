@@ -12,6 +12,7 @@ A React-based chat application that integrates with the Grok AI model through x.
 - Responsive design with styled-components
 - Dark/Light theme toggle
 - Mobile-friendly sidebar navigation
+- Settings management for API key configuration
 
 ## Prerequisites
 
@@ -19,16 +20,21 @@ Before running this application, you'll need:
 
 - Node.js (v18 or higher)
 - npm or yarn
-- A valid Grok API key from x.ai
+- A valid API key from x.ai (Grok)
 
 ## Environment Setup
 
-Create a `.env` file in the root directory and add your Grok API key:
+1. Clone the repository
+2. Create a `.env` file in the root directory
+3. Add your x.ai API key:
 
 REACT_APP_GROK_API_KEY=your_api_key_here
 
-In the project directoru, run 
+Alternatively, you can set your API key through the settings interface in the app.
 
+## Installation
+
+In the project directory, run:
 ### `npm install`
 
 
@@ -53,8 +59,8 @@ The build is minified and optimized for best performance.
 ## Key Features
 
 - **Chat Management**: Create, switch between, and delete chat sessions
-- **Responsive Design**: Fully functional on both desktop and mobile devices
+- **Persistent Storage**: Chat history is saved in localStorage
+- **Responsive Design**: Works on both desktop and mobile devices
 - **Theme Support**: Toggle between light and dark themes
-- **Message Formatting**: Full markdown support including code blocks
-- **Persistent Storage**: Chat history saved to localStorage
-- **Error Handling**: Graceful error handling for API failures
+- **API Key Management**: Set and update your x.ai API key through the settings interface
+- **Markdown Support**: Rich text formatting and code syntax highlighting

@@ -1,14 +1,22 @@
 import OpenAI from 'openai';
 
+const getApiKey = () => {
+  return localStorage.getItem('grokApiKey') || process.env.REACT_APP_GROK_API_KEY || '';
+};
+
 // Create OpenAI instance with configuration
 const openai = new OpenAI({
-  apiKey: process.env.REACT_APP_GROK_API_KEY || '',
+  apiKey: getApiKey(),
   baseURL: 'https://api.x.ai/v1',
   dangerouslyAllowBrowser: true
 });
 
 export const sendMessageToGrok = async (message, chatHistory = []) => {
   try {
+    if (!getApiKey()) {
+      throw new Error('Please set your X API key in settings');
+    }
+
     // Convert chat history to the format expected by the API
     const messages = [
       { role: 'system', content: 'You are Grok, a chatbot inspired by the Hitchhiker\'s Guide to the Galaxy.' },
