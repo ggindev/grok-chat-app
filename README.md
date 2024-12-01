@@ -1,6 +1,7 @@
 # Grok Chat App
 
 A React-based chat application that integrates with the Grok AI model through x.ai's API.
+![image](https://github.com/user-attachments/assets/15c3f74f-4e74-4bd5-bf40-e42ed1f3f78f)
 
 ## Features
 
