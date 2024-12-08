@@ -10,6 +10,7 @@ const MessageContainer = styled.div`
 `;
 
 const MessageBubble = styled.div`
+  position: relative;
   background-color: ${props => props.$isUser 
     ? props.theme.colors.primary 
     : props.theme.isDarkMode 
@@ -55,10 +56,48 @@ const MessageBubble = styled.div`
   }
 `;
 
+const CopyButton = styled.button`
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 4px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: ${props => props.$isUser || props.theme.isDarkMode ? 'white' : 'black'};
+  border-radius: 4px;
+
+  ${MessageBubble}:hover & {
+    opacity: 0.7;
+  }
+
+  &:hover {
+    opacity: 1 !important;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+`;
+
 function ChatMessage({ message }) {
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(message.text);
+    } catch (err) {
+      console.error('Failed to copy text:', err);
+    }
+  };
+
   return (
     <MessageContainer $isUser={message.isUser}>
       <MessageBubble $isUser={message.isUser}>
+        <CopyButton 
+          onClick={handleCopy} 
+          $isUser={message.isUser}
+          title="Copy message"
+        >
+          📋
+        </CopyButton>
         <ReactMarkdown>{message.text}</ReactMarkdown>
       </MessageBubble>
     </MessageContainer>
