@@ -46,6 +46,12 @@ const Button = styled.button`
   }
 `;
 
+const ExportButton = styled(Button)`
+  background-color: #28a745;
+  margin-bottom: 20px;
+  width: 100%;
+`;
+
 function SettingsModal({ isOpen, onClose }) {
   const [apiKey, setApiKey] = useState(localStorage.getItem('grokApiKey') || '');
 
@@ -55,12 +61,42 @@ function SettingsModal({ isOpen, onClose }) {
     window.location.reload(); // Reload to reinitialize the API client
   };
 
+  const handleExport = () => {
+    try {
+      // Get chat history from localStorage
+      const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+      
+      // Create a Blob with the chat data
+      const blob = new Blob([JSON.stringify(chats, null, 2)], { type: 'application/json' });
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `grok-chat-history-${new Date().toISOString().split('T')[0]}.json`;
+      
+      // Trigger download
+      document.body.appendChild(a);
+      a.click();
+      
+      // Cleanup
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Failed to export chat history:', error);
+      alert('Failed to export chat history. Please try again.');
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={e => e.stopPropagation()}>
         <h2>Settings</h2>
+        <ExportButton onClick={handleExport}>
+          Export Chat History
+        </ExportButton>
         <div>
           <label>X API Key:</label>
           <Input
