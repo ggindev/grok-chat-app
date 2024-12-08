@@ -68,6 +68,9 @@ function ChatInterface({ messages, onMessagesUpdate }) {
       text: inputValue,
       isUser: true,
       timestamp: new Date().toISOString(),
+      id: Date.now().toString(),
+      versions: [],
+      isEdited: false
     };
 
     const newMessages = [...messages, userMessage];
@@ -90,11 +93,74 @@ function ChatInterface({ messages, onMessagesUpdate }) {
     }
   };
 
+  const handleMessageEdit = async (editedMessage) => {
+    try {
+      setIsLoading(true);
+      
+      // Find the index of the edited message
+      const editedIndex = messages.findIndex(msg => msg.id === editedMessage.id);
+      
+      // Keep all messages up to and including the edited message
+      const previousMessages = messages.slice(0, editedIndex);
+      
+      if (editedMessage.currentVersionIndex !== undefined) {
+        // For version switching: show corresponding subsequent messages if they exist
+        const versionTimestamp = editedMessage.timestamp;
+        const subsequentMessages = messages.slice(editedIndex + 1).filter(msg => 
+          new Date(msg.timestamp) > new Date(versionTimestamp)
+        );
+        
+        onMessagesUpdate([
+          ...previousMessages, 
+          editedMessage,
+          ...subsequentMessages
+        ]);
+        setIsLoading(false);
+        return;
+      }
+      
+      // For new edits: keep previous messages and get new response
+      const updatedMessages = [...previousMessages, editedMessage];
+      onMessagesUpdate(updatedMessages);
+
+      // Get a new response from Grok based on the edited message
+      const response = await sendMessageToGrok(editedMessage.text, updatedMessages);
+      const grokMessage = {
+        text: response.content,
+        isUser: false,
+        timestamp: new Date().toISOString(),
+        id: Date.now().toString()
+      };
+
+      // Store original subsequent messages for reference
+      const subsequentMessages = messages.slice(editedIndex + 1).map(msg => ({
+        ...msg,
+        isAlternateTimeline: true // Mark these as from alternate timeline
+      }));
+
+      // Update with the new Grok response and keep subsequent messages
+      onMessagesUpdate([
+        ...updatedMessages, 
+        grokMessage,
+        ...subsequentMessages
+      ]);
+    } catch (error) {
+      console.error('Error updating conversation after edit:', error);
+      setError('Failed to update conversation after edit. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <ChatContainer>
       <MessagesContainer>
         {messages.map((message, index) => (
-          <ChatMessage key={index} message={message} />
+          <ChatMessage 
+            key={message.id || index} 
+            message={message} 
+            onEdit={handleMessageEdit}
+          />
         ))}
         {isLoading && <div style={{ textAlign: 'center', padding: '10px' }}>Loading...</div>}
         {error && <div style={{ color: 'red', textAlign: 'center', padding: '10px' }}>{error}</div>}

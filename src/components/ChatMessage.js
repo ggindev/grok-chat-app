@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 
@@ -54,6 +54,16 @@ const MessageBubble = styled.div`
       background-color: transparent;
     }
   }
+
+  ${props => props.message?.isAlternateTimeline && `
+    opacity: 0.7;
+    &::before {
+      content: '↯';
+      position: absolute;
+      left: -20px;
+      color: ${props.theme.colors.secondary};
+    }
+  `}
 `;
 
 const CopyButton = styled.button`
@@ -79,7 +89,74 @@ const CopyButton = styled.button`
   }
 `;
 
-function ChatMessage({ message }) {
+const EditButton = styled(CopyButton)`
+  right: 32px;
+`;
+
+const EditInput = styled.textarea`
+  width: 100%;
+  padding: 8px;
+  margin: 4px 0;
+  border: 1px solid ${props => props.theme.colors.border};
+  border-radius: 4px;
+  background-color: ${props => props.theme.colors.background};
+  color: ${props => props.theme.colors.text};
+  resize: vertical;
+`;
+
+const VersionControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+`;
+
+const VersionButton = styled.button`
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+function ChatMessage({ message, onEdit }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(message.text);
+  const [currentVersionIndex, setCurrentVersionIndex] = useState(0);
+
+  const allVersions = [
+    { text: message.text, timestamp: message.timestamp },
+    ...(message.versions || [])
+  ];
+  
+  const handleVersionChange = (index) => {
+    const selectedVersion = allVersions[index];
+    if (!selectedVersion) return;
+
+    setCurrentVersionIndex(index);
+    setEditValue(selectedVersion.text);
+
+    onEdit({
+      ...message,
+      text: selectedVersion.text,
+      timestamp: selectedVersion.timestamp,
+      currentVersionIndex: index,
+      versions: message.versions
+    });
+  };
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(message.text);
@@ -88,9 +165,34 @@ function ChatMessage({ message }) {
     }
   };
 
+  const handleEdit = () => {
+    if (!isEditing) {
+      setIsEditing(true);
+      return;
+    }
+
+    if (editValue !== message.text) {
+      const updatedMessage = {
+        ...message,
+        text: editValue,
+        versions: [
+          { text: message.text, timestamp: message.timestamp },
+          ...(message.versions || [])
+        ],
+        timestamp: new Date().toISOString(),
+        isEdited: true
+      };
+
+      onEdit(updatedMessage);
+      setCurrentVersionIndex(0);
+    }
+    
+    setIsEditing(false);
+  };
+
   return (
     <MessageContainer $isUser={message.isUser}>
-      <MessageBubble $isUser={message.isUser}>
+      <MessageBubble $isUser={message.isUser} message={message}>
         <CopyButton 
           onClick={handleCopy} 
           $isUser={message.isUser}
@@ -98,7 +200,52 @@ function ChatMessage({ message }) {
         >
           📋
         </CopyButton>
-        <ReactMarkdown>{message.text}</ReactMarkdown>
+        {message.isUser && (
+          <EditButton
+            onClick={handleEdit}
+            $isUser={message.isUser}
+            title={isEditing ? "Save edit" : "Edit message"}
+          >
+            {isEditing ? "💾" : "✏️"}
+          </EditButton>
+        )}
+        {isEditing ? (
+          <EditInput
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleEdit()}
+          />
+        ) : (
+          <>
+            <ReactMarkdown>{message.text}</ReactMarkdown>
+            {message.isEdited && (
+              <>
+                <small style={{ opacity: 0.7 }}>(edited)</small>
+                {allVersions.length > 1 && (
+                  <VersionControls>
+                    <VersionButton
+                      onClick={() => handleVersionChange(Math.min(allVersions.length - 1, currentVersionIndex + 1))}
+                      disabled={currentVersionIndex >= allVersions.length - 1}
+                      title="Previous version"
+                    >
+                      ◀
+                    </VersionButton>
+                    <span>
+                      Version {allVersions.length - currentVersionIndex}/{allVersions.length}
+                    </span>
+                    <VersionButton
+                      onClick={() => handleVersionChange(Math.max(0, currentVersionIndex - 1))}
+                      disabled={currentVersionIndex <= 0}
+                      title="Next version"
+                    >
+                      ▶
+                    </VersionButton>
+                  </VersionControls>
+                )}
+              </>
+            )}
+          </>
+        )}
       </MessageBubble>
     </MessageContainer>
   );
