@@ -13,6 +13,11 @@ A React-based chat application that integrates with the Grok AI model through x.
 - Dark/Light theme toggle
 - Mobile-friendly sidebar navigation
 - Settings management for API key configuration
+- Message editing with version history
+- Copy message content to clipboard
+- Export chat history to JSON
+- Alternative timeline responses after message edits
+- Version navigation for edited messages
 
 ## Prerequisites
 
@@ -64,3 +69,9 @@ The build is minified and optimized for best performance.
 - **Theme Support**: Toggle between light and dark themes
 - **API Key Management**: Set and update your x.ai API key through the settings interface
 - **Markdown Support**: Rich text formatting and code syntax highlighting
+- **Message Management**:
+  - Edit your messages with full version history
+  - Navigate through different versions of edited messages
+  - Copy message content to clipboard
+  - View alternative timeline responses after edits
+- **Data Export**: Export your entire chat history as JSON
