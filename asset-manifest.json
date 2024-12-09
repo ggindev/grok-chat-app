@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.551816ac.css",
-    "main.js": "/static/js/main.3adc8021.js",
-    "static/js/453.e193dab4.chunk.js": "/static/js/453.e193dab4.chunk.js",
-    "index.html": "/index.html",
-    "main.551816ac.css.map": "/static/css/main.551816ac.css.map",
-    "main.3adc8021.js.map": "/static/js/main.3adc8021.js.map",
-    "453.e193dab4.chunk.js.map": "/static/js/453.e193dab4.chunk.js.map"
+    "main.css": "/grok-chat-app/static/css/main.551816ac.css",
+    "main.js": "/grok-chat-app/static/js/main.cfd69895.js",
+    "static/js/453.e193dab4.chunk.js": "/grok-chat-app/static/js/453.e193dab4.chunk.js",
+    "index.html": "/grok-chat-app/index.html",
+    "main.551816ac.css.map": "/grok-chat-app/static/css/main.551816ac.css.map",
+    "main.cfd69895.js.map": "/grok-chat-app/static/js/main.cfd69895.js.map",
+    "453.e193dab4.chunk.js.map": "/grok-chat-app/static/js/453.e193dab4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.551816ac.css",
-    "static/js/main.3adc8021.js"
+    "static/js/main.cfd69895.js"
   ]
 }
